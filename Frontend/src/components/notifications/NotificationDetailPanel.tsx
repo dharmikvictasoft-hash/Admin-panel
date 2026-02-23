@@ -25,7 +25,7 @@ function NotificationDetailPanel({
         inline ? "p-4" : "p-5"
       } dark:border-gray-800 dark:bg-gray-900`}
     >
-      <div className="mb-4 flex items-start justify-between gap-2">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white/90">
           {notification.title}
         </h3>

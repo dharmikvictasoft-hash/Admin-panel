@@ -24,7 +24,7 @@ function NotificationItem({
 }: NotificationItemProps) {
   return (
     <div
-      className={`group flex items-start gap-3 rounded-xl border p-3 transition ${
+      className={`group flex items-start gap-2.5 rounded-xl border p-3 transition sm:gap-3 ${
         selected
           ? "border-brand-300 bg-brand-50/80 ring-1 ring-brand-200"
           : notification.read
@@ -55,17 +55,17 @@ function NotificationItem({
       </div>
 
       <div className="min-w-0 flex-1">
-        <div className="mb-1 flex items-center justify-between gap-2">
-          <h4 className="truncate text-sm font-semibold text-gray-800 dark:text-white/90">
+        <div className="mb-1 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+          <h4 className="line-clamp-2 text-sm font-semibold text-gray-800 sm:truncate dark:text-white/90">
             {notification.title}
           </h4>
-          <span className="text-xs text-gray-500 dark:text-gray-400">
+          <span className="shrink-0 text-xs text-gray-500 dark:text-gray-400">
             {formatNotificationTime(notification.createdAt)}
           </span>
         </div>
 
         <p
-          className={`text-gray-600 dark:text-gray-300 ${
+          className={`hidden text-gray-600 sm:block dark:text-gray-300 ${
             compact ? "line-clamp-2 text-xs" : "line-clamp-2 text-sm"
           }`}
         >
@@ -83,7 +83,7 @@ function NotificationItem({
           </span>
 
           {!notification.read && onMarkRead ? (
-            <div className="ml-auto flex items-center gap-3">
+            <div className="ml-0 flex w-full items-center justify-end gap-3 sm:ml-auto sm:w-auto">
               <button
                 type="button"
                 onClick={(event) => {
@@ -105,7 +105,7 @@ function NotificationItem({
               ) : null}
             </div>
           ) : notification.actionPath ? (
-            <div className="ml-auto">
+            <div className="ml-0 w-full text-right sm:ml-auto sm:w-auto">
               <Link
                 to={notification.actionPath}
                 className="text-xs font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400"

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useNotifications } from "../../context/NotificationContext";
 import NotificationList from "../notifications/NotificationList";
 import { sortNewestFirst } from "../notifications/notificationUtils";
@@ -9,6 +9,7 @@ export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const { notifications, unreadCount, markAsRead, markAllAsRead } =
     useNotifications();
+  const navigate = useNavigate();
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -26,6 +27,12 @@ export default function NotificationDropdown() {
     () => sortNewestFirst(notifications).slice(0, 6),
     [notifications]
   );
+
+  const handleOpenNotificationFromDropdown = (id: string) => {
+    markAsRead(id);
+    closeDropdown();
+    navigate(`/notify?notification=${id}`);
+  };
 
   return (
     <div className="relative z-[9999]">
@@ -58,7 +65,7 @@ export default function NotificationDropdown() {
       <Dropdown
         isOpen={isOpen}
         onClose={closeDropdown}
-        className="absolute -right-[240px] mt-[17px] flex h-[480px] w-[350px] flex-col rounded-2xl z-[9999] border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark sm:w-[361px] lg:right-0"
+        className="fixed left-4 right-4 top-[72px] z-[9999] flex h-[72vh] w-auto flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-[17px] sm:h-[480px] sm:w-[350px] lg:w-[361px]"
       >
         <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-700">
           <h5 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
@@ -82,7 +89,7 @@ export default function NotificationDropdown() {
             compact
             emptyTitle="No notifications"
             emptyMessage="New updates will appear here."
-            onNotificationClick={(id) => markAsRead(id)}
+            onNotificationClick={handleOpenNotificationFromDropdown}
             onMarkRead={markAsRead}
           />
         </div>

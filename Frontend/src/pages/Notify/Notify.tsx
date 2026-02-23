@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import PageMeta from "../../components/common/PageMeta";
 import PageHeaderWithBreadcrumb from "../../components/common/PageHeaderWithBreadcrumb";
 import ScrollReveal from "../../components/common/ScrollReveal";
@@ -12,6 +13,7 @@ import { sortNewestFirst } from "../../components/notifications/notificationUtil
 function Notify() {
   const { notifications, unreadCount, markAsRead, markAllAsRead } =
     useNotifications();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState("");
   const [activeType, setActiveType] = useState<"all" | NotificationType>("all");
   const [activeTab, setActiveTab] = useState<"all" | "unread">("all");
@@ -76,8 +78,26 @@ function Notify() {
     }
   }, [filteredNotifications, selectedNotificationId]);
 
+  useEffect(() => {
+    const notificationFromQuery = searchParams.get("notification");
+    if (!notificationFromQuery) return;
+
+    setActiveType("all");
+    setActiveTab("all");
+    setSearch("");
+    setSelectedNotificationId(notificationFromQuery);
+  }, [searchParams]);
+
   const handleOpenNotification = (id: string) => {
-    setSelectedNotificationId((previous) => (previous === id ? null : id));
+    setSelectedNotificationId((previous) => {
+      const nextSelectedId = previous === id ? null : id;
+      if (nextSelectedId) {
+        setSearchParams({ notification: nextSelectedId });
+      } else {
+        setSearchParams({});
+      }
+      return nextSelectedId;
+    });
     markAsRead(id);
   };
 
@@ -95,7 +115,7 @@ function Notify() {
         description="Central notification hub for all operational updates"
       />
 
-      <div className="ml-[15px]">
+      <div className="px-1 sm:px-0 sm:ml-[15px] sm:mr-[15px]">
         <ScrollReveal origin="left" delay={0.1} className="relative z-10">
           <PageHeaderWithBreadcrumb
             title="Notifications"
@@ -110,7 +130,7 @@ function Notify() {
           <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <div className="rounded-2xl border border-gray-200 bg-gradient-to-br from-white via-white to-gray-50 p-5 dark:border-gray-800 dark:from-gray-900 dark:to-gray-800">
               <p className="text-xs uppercase tracking-wide text-gray-500">Total Alerts</p>
-              <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white/90">
+              <p className="mt-2 text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-white/90">
                 {notifications.length}
               </p>
             </div>
@@ -118,7 +138,7 @@ function Notify() {
               <p className="text-xs uppercase tracking-wide text-orange-700 dark:text-orange-300">
                 Unread
               </p>
-              <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white/90">
+              <p className="mt-2 text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-white/90">
                 {unreadCount}
               </p>
             </div>
@@ -126,13 +146,13 @@ function Notify() {
               <p className="text-xs uppercase tracking-wide text-red-700 dark:text-red-300">
                 High Priority Unread
               </p>
-              <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white/90">
+              <p className="mt-2 text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-white/90">
                 {highPriorityUnreadCount}
               </p>
             </div>
             <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
               <p className="text-xs uppercase tracking-wide text-gray-500">Orders & Billing</p>
-              <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white/90">
+              <p className="mt-2 text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-white/90">
                 {typeCount.orders + typeCount.billing}
               </p>
             </div>
@@ -140,7 +160,7 @@ function Notify() {
         </ScrollReveal>
 
         <ScrollReveal origin="right" delay={0.18} className="relative z-10">
-          <div className="mt-5 rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+          <div className="mt-5 rounded-2xl border border-gray-200 bg-white p-3 sm:p-4 dark:border-gray-800 dark:bg-gray-900">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <input
                 type="text"
@@ -152,7 +172,7 @@ function Notify() {
               <button
                 type="button"
                 onClick={markAllAsRead}
-                className="h-11 rounded-lg bg-brand-500 px-4 text-sm font-medium text-white transition hover:bg-brand-600"
+                className="h-11 w-full rounded-lg bg-brand-500 px-4 text-sm font-medium text-white transition hover:bg-brand-600 sm:w-auto"
               >
                 Mark All As Read
               </button>
@@ -160,7 +180,7 @@ function Notify() {
           </div>
         </ScrollReveal>
 
-        <div className="mt-5 grid gap-5 xl:grid-cols-[340px_minmax(0,1fr)]">
+        <div className="mt-5 grid gap-5 lg:grid-cols-[300px_minmax(0,1fr)] xl:grid-cols-[340px_minmax(0,1fr)]">
           <ScrollReveal origin="left" delay={0.22} className="relative z-10">
             <NotificationFilters
               activeType={activeType}
@@ -171,8 +191,8 @@ function Notify() {
           </ScrollReveal>
 
           <ScrollReveal origin="top" delay={0.25} className="relative z-10">
-            <div className="rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
-              <div className="mb-4 flex items-center justify-between">
+            <div className="rounded-2xl border border-gray-200 bg-white p-3 sm:p-4 dark:border-gray-800 dark:bg-gray-900">
+              <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white/90">
                   Notification Feed
                 </h2>
@@ -184,8 +204,11 @@ function Notify() {
                 <div className="mb-4">
                   <button
                     type="button"
-                    onClick={() => setSelectedNotificationId(null)}
-                    className="inline-flex h-9 items-center rounded-lg border border-gray-300 bg-white px-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                    onClick={() => {
+                      setSelectedNotificationId(null);
+                      setSearchParams({});
+                    }}
+                    className="inline-flex h-9 w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 sm:w-auto dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
                   >
                     Back to all notifications
                   </button>

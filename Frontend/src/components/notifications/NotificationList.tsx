@@ -41,7 +41,7 @@ function NotificationList({
   return (
     <div className={`grid ${compact ? "gap-2.5" : "gap-3"}`}>
       {notifications.map((notification) => (
-        <div key={notification.id}>
+        <div key={notification.id} className="mx-auto w-full max-w-xl sm:max-w-none">
           <NotificationItem
             notification={notification}
             compact={compact}
